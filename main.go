@@ -43,11 +43,12 @@ func VerifySignature(body, xLineSignature string) error {
 func setupRouter() *gin.Engine {
 	r := gin.Default()
 
-	r.GET("/healthyCheck", func(c *gin.Context) {
+	g := r.Group("/chatbot")
+	g.GET("/healthyCheck", func(c *gin.Context) {
 		c.String(http.StatusOK, "")
 	})
 
-	r.POST("/pushMsg", func(c *gin.Context) {
+	g.POST("/pushMsg", func(c *gin.Context) {
 		xLineSignature := c.Request.Header.Get(RequestHeaderXLineSignature)
 		body, err := ioutil.ReadAll(c.Request.Body)
 		if err != nil {
