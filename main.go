@@ -1,6 +1,8 @@
 package main
 
 import (
+	"chatbotHelloWord/model/request"
+
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/base64"
@@ -15,67 +17,9 @@ import (
 )
 
 // not good to do this.
-const debugDoesCheckXSigniture = true
+const debugDoesCheckXSigniture = false
 
 const requestHeaderXLineSignature = "X-Line-Signature"
-
-type eventSource struct {
-	UserID     string `json:"userId"`
-	SourceType string `json:"type"`
-	GroupID    string `json:"groupId"`
-	RoomID     string `json:"roomId"`
-}
-
-type emojiMessage struct {
-	Index     int    `json:"index"`
-	Length    int    `json:"lenght"`
-	ProductID string `json:"productId"`
-	EmojiID   string `json:"emojiId"`
-}
-
-type messageContentProvider struct {
-	ContentType        string `json:"type"`
-	OriginalContentURL string `json:"originalContentUrl"`
-	PreviewImageURL    string `json:"previewImageUrl"`
-}
-
-type messageUnsent struct {
-	MessageID string `json:"messageId"`
-}
-
-type eventMessage struct {
-	MessageType         string                 `json:"type"`
-	ID                  string                 `json:"id"`
-	Text                string                 `json:"text"`
-	Emojis              []emojiMessage         `json:"emojis"`
-	PacakgeID           string                 `json:"packageId"`
-	StickerID           string                 `json:"stickerId"`
-	StickerResourceType string                 `json:"stickerResourceType"`
-	Duration            int                    `json:"duration"`
-	ContentProvider     messageContentProvider `json:"contentProvider"`
-	FileName            string                 `json:"filename"`
-	FileSize            int                    `json:"fileSize"`
-	Title               string                 `json:"title"`
-	Address             string                 `json:"address"`
-	Latitude            float64                `json:"latitude"`
-	Longtitude          float64                `json:"longtitude"`
-}
-
-type event struct {
-	MessageType   string        `json:"type"`
-	ReplyToken    string        `json:"replyToken"`
-	Source        eventSource   `json:"source"`
-	Timestamp     int           `json:"timestamp"`
-	Mode          string        `json:"mode"`
-	Message       eventMessage  `json:"message"`
-	MessageUnsent messageUnsent `json:"unsend"`
-	// checkpoint member join
-}
-
-type webhookEventOjbect struct {
-	Events      []event `json:"events"`
-	Destination string  `json:"destination"`
-}
 
 func verifySignature(body, xLineSignature string) error {
 	if xLineSignature == "" {
@@ -123,7 +67,7 @@ func setupRouter() *gin.Engine {
 			return
 		}
 
-		tmp := webhookEventOjbect{}
+		tmp := request.WebhookEventOjbect{}
 		if err := json.Unmarshal(body, &tmp); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 			return
