@@ -1,7 +1,7 @@
 package main
 
 import (
-	"chatbotHelloWord/model/request"
+	"github.com/goodseeyou/chatbot-helloworld/model/request"
 
 	"crypto/hmac"
 	"crypto/sha256"
